@@ -553,7 +553,7 @@
     "completed_unpaid_desc": "The work is completed but the payment has not been collected — an alert will be sent to the Accounts",
     "suspended_left": "Installation was not completed and the goods were left with the customer.",
     "suspended_left_desc": "A note is required in this case to explain the reason clearly.",
-    "suspended_returned": "The installation was not completed and the goods were returned by the customer.",
+    "suspended_returned": "The installation completed and the a part of goods were returned.",
     "suspended_returned_desc": "The work was not completed and all the goods were retrieved from the customer and returned.",
     "additional_notes": "Additional notes",
     "add_note": "Add a note for the admin...",

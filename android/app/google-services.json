@@ -64,6 +64,25 @@
     },
     {
       "client_info": {
+        "mobilesdk_app_id": "1:537414522632:android:a05215d747e91576a23ebd",
+        "android_client_info": {
+          "package_name": "com.zoom.technical"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBk3CO9JwrKaH5wQHX0qL1mNxYEupkVAgM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:537414522632:android:282409e2ce5d3754a23ebd",
         "android_client_info": {
           "package_name": "com.zoomtechnical.app"
