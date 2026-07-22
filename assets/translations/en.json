@@ -429,7 +429,10 @@
   },
   "intro": {
     "title": "Khelij-Code\nCreate , Innovate",
-    "description": "Welcome to Khalij Software Solutions – your trusted tech partner in the Gulf. We build smart, secure and user-friendly digital products that help businesses grow and customers stay connected."
+    "description": "Welcome to Khalij Software Solutions – your trusted tech partner in the Gulf. We build smart, secure and user-friendly digital products that help businesses grow and customers stay connected.",
+    "welcome_to": "Welcome to",
+    "zoom_app": "Zoom App",
+    "zoom_description": "The fastest and easiest maintenance app for your home and office. Send your request and get an expert technician in minutes."
   },
   "project": {
     "untitled": "Untitled Project",

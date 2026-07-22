@@ -405,6 +405,9 @@ abstract class  LocaleKeys {
   static const reviews = 'reviews';
   static const intro_title = 'intro.title';
   static const intro_description = 'intro.description';
+  static const intro_welcome_to = 'intro.welcome_to';
+  static const intro_zoom_app = 'intro.zoom_app';
+  static const intro_zoom_description = 'intro.zoom_description';
   static const intro = 'intro';
   static const project_untitled = 'project.untitled';
   static const project_view_project = 'project.view_project';
