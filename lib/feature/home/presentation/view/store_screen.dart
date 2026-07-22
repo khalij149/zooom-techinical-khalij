@@ -107,7 +107,7 @@ class StoreView extends StatelessWidget {
                               LocaleKeys.Home_approved_disbursement_requests
                                   .tr(
                                 args: [
-                                  DateFormat('EEEE, MMMM d')
+                                  DateFormat('EEEE, MMMM d', context.locale.languageCode)
                                       .format(DateTime.now()),
                                 ],
                               ),

@@ -98,9 +98,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
                         const SizedBox(height: 8),
 
-                        const Text(
-                          "Welcome Back",
-                          style: TextStyle(
+                        Text(
+                          LocaleKeys.Authentication_WelcomeBack.tr(),
+                          style: const TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.w700,
                             color: Colors.black,
@@ -112,13 +112,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
 
                         // Phone label
-                        const Align(
-                          alignment: Alignment.centerLeft,
+                        Align(
+                          alignment: AlignmentDirectional.centerStart,
                           child: Padding(
-                            padding: EdgeInsets.only(left: 18),
+                            padding: const EdgeInsetsDirectional.only(start: 18),
                             child: Text(
-                              "Phone Number",
-                              style: TextStyle(
+                              LocaleKeys.Authentication_phone_number.tr(),
+                              style: const TextStyle(
                                 fontSize: 15,
                                 color: Colors.black87,
                                 fontWeight: FontWeight.w500,
@@ -138,13 +138,13 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 18),
 
                         // Password label
-                        const Align(
-                          alignment: Alignment.centerLeft,
+                        Align(
+                          alignment: AlignmentDirectional.centerStart,
                           child: Padding(
-                            padding: EdgeInsets.only(left: 18),
+                            padding: const EdgeInsetsDirectional.only(start: 18),
                             child: Text(
-                              "Password",
-                              style: TextStyle(
+                              LocaleKeys.Authentication_password.tr(),
+                              style: const TextStyle(
                                 fontSize: 15,
                                 color: Colors.black87,
                                 fontWeight: FontWeight.w500,
@@ -179,9 +179,9 @@ class _LoginScreenState extends State<LoginScreen> {
                         const SizedBox(height: 10),
 
                         Align(
-                          alignment: Alignment.centerRight,
+                          alignment: AlignmentDirectional.centerEnd,
                           child: Padding(
-                            padding: const EdgeInsets.only(right: 10),
+                            padding: const EdgeInsetsDirectional.only(end: 10),
                             child: TextButton(
                               onPressed: () {
                                 Navigator.push(
@@ -196,9 +196,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 minimumSize: const Size(20, 20),
                                 tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                               ),
-                              child: const Text(
-                                "Forgot Password",
-                                style: TextStyle(
+                              child: Text(
+                                LocaleKeys.Authentication_forgot_password.tr(),
+                                style: const TextStyle(
                                   fontSize: 14,
                                   color: Colors.black54,
                                   decoration: TextDecoration.underline,
@@ -229,9 +229,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                 borderRadius: BorderRadius.circular(30),
                               ),
                             ),
-                            child: const Text(
-                              "Login",
-                              style: TextStyle(
+                            child: Text(
+                              LocaleKeys.Authentication_Login.tr(),
+                              style: const TextStyle(
                                 fontSize: 18,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,

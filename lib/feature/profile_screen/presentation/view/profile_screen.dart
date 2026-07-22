@@ -1,6 +1,7 @@
 import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import '../../../../generated/locale_keys.g.dart';
 import '../../../Terms_conditions_screen/presentation/view/Terms_conditions_screen.dart';
 import '../../../contact_us/presentation/view/contact_us_form.dart';
@@ -280,16 +281,14 @@ class _LanguageBottomSheetState extends State<_LanguageBottomSheet> {
         ),
         child: Row(
           children: [
-            // Using a simple placeholder for flag if it's not SVG or if we need a custom look
-            Container(
-              width: 32.w,
-              height: 24.h,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(4.r),
-                image: DecorationImage(
-                  image: AssetImage(flag),
-                  fit: BoxFit.cover,
-                ),
+            // Using SvgPicture to render the SVG flag image correctly
+            ClipRRect(
+              borderRadius: BorderRadius.circular(4.r),
+              child: SvgPicture.asset(
+                flag,
+                width: 32.w,
+                height: 24.h,
+                fit: BoxFit.cover,
               ),
             ),
             SizedBox(width: 16.w),
