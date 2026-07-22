@@ -35,12 +35,6 @@ class NotificationScreen extends StatelessWidget {
                 padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 20.h),
                 child: Row(
                   children: [
-                    IconButton(
-                      onPressed: () => Navigator.pop(context),
-                      icon: const Icon(Icons.arrow_back, color: Colors.white),
-                      padding: EdgeInsets.zero,
-                      constraints: const BoxConstraints(),
-                    ),
                     Expanded(
                       child: Text(
                         LocaleKeys.notifications_title.tr(),

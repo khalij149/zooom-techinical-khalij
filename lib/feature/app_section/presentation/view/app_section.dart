@@ -1,4 +1,6 @@
+import 'package:easy_localization/easy_localization.dart';
 import 'package:flutter/material.dart';
+import '../../../../generated/locale_keys.g.dart';
 import '../../../../core/constants/app_colors.dart';
 import '../../../home/presentation/view/all_requests_screen.dart';
 import '../../../home/presentation/view/home_view.dart';
@@ -54,6 +56,21 @@ class CustomBottomNav extends StatelessWidget {
     _NavItemData(icon: Icons.notifications_none_rounded, label: 'Alerts'),
     _NavItemData(icon: Icons.person_outline_rounded, label: 'Profile'),
   ];
+
+  String _getLocalizedLabel(BuildContext context, int index) {
+    switch (index) {
+      case 0:
+        return LocaleKeys.general_home.tr();
+      case 1:
+        return LocaleKeys.general_all_requests.tr();
+      case 2:
+        return LocaleKeys.general_alerts.tr();
+      case 3:
+        return LocaleKeys.Profile_Profile.tr();
+      default:
+        return '';
+    }
+  }
 
   AlignmentDirectional _alignment(int index) {
     switch (index) {
@@ -128,7 +145,7 @@ class CustomBottomNav extends StatelessWidget {
                                     ? AppColors.accentRed
                                     : Colors.white,
                               ),
-                              child: Text(items[index].label),
+                              child: Text(_getLocalizedLabel(context, index)),
                             ),
                           ],
                         ),
