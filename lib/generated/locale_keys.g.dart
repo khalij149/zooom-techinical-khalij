@@ -519,6 +519,8 @@ abstract class  LocaleKeys {
   static const status_update_completed_unpaid_desc = 'status_update.completed_unpaid_desc';
   static const status_update_suspended_left = 'status_update.suspended_left';
   static const status_update_suspended_left_desc = 'status_update.suspended_left_desc';
+  static const status_update_installation_not_done = 'status_update.installation_not_done';
+  static const status_update_installation_not_done_desc = 'status_update.installation_not_done_desc';
   static const status_update_suspended_returned = 'status_update.suspended_returned';
   static const status_update_suspended_returned_desc = 'status_update.suspended_returned_desc';
   static const status_update_additional_notes = 'status_update.additional_notes';

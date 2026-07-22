@@ -13,6 +13,7 @@ import '../model/start_order_model.dart';
 import '../model/suspend_order_model.dart';
 import '../model/suspend_with_goods_returned.dart';
 import '../model/unsuspend_model.dart';
+import '../model/installation_not_done_model.dart';
 abstract class HomeDataSources {
   Future<Result<HomeModel>> getHomeData();
   Future<Result<AllRequestsModel>> getAllRequests();
@@ -24,6 +25,7 @@ abstract class HomeDataSources {
   Future<Result<CompleteOrderModel>> completeOrder(int orderId);
   Future<Result<CompletedPaidModel>> completedPaid(int orderId, FormData body);
   Future<Result<SuspendWithGoodsReturnedModel>> suspendWithGoodsReturned(int orderId, FormData body);
+  Future<Result<InstallationNotDoneModel>> installationNotDone(int orderId, String notes);
   Future<Result<ProductsInOrders>> productsInOrders(int orderId,);
   Future<Result<GetReceivedRequestsModel>> getReceivedRequests();
 

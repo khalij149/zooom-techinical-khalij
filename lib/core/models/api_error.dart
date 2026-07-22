@@ -18,6 +18,18 @@ class ApiError {
 
   /// ✅ يرجع الرسالة حسب اللغة الحالية للتطبيق
   String getLocalizedMessage(BuildContext context) {
+    // 1. Prioritize detailed field validation error (firstFieldError)
+    final fieldError = firstFieldError;
+    if (fieldError != null && fieldError.isNotEmpty) {
+      return fieldError;
+    }
+
+    // 2. Fallback to top-level errors['message']
+    if (errors != null && errors!['message'] != null) {
+      return errors!['message'].toString();
+    }
+
+    // 3. Fallback to main localized message
     if (message == null) return LocaleKeys.general_unexpected_error.tr();
     return context.getLocalizedMessage(message, fallback: LocaleKeys.general_unexpected_error.tr());
   }

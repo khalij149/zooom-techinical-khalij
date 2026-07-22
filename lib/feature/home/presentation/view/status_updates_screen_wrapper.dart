@@ -8,6 +8,7 @@ import '../view_model/completed_paid/completed_paid_cubit.dart';
 import '../view_model/products_in_orders/products_in_orders_cubit.dart';
 import '../view_model/suspend_order/suspend_order_cubit.dart';
 import '../view_model/suspend_with_goods_returned/suspend_with_goods_returned_cubit.dart';
+import '../view_model/installation_not_done/installation_not_done_cubit.dart';
 
 class StatusUpdateScreenWrapper extends StatelessWidget {
   final int orderId;
@@ -31,6 +32,8 @@ class StatusUpdateScreenWrapper extends StatelessWidget {
         BlocProvider(create: (_) => serviceLocator<ProductsInOrdersCubit>()),
         BlocProvider(
             create: (_) => serviceLocator<SuspendWithGoodsReturnedCubit>()),
+        BlocProvider(
+            create: (_) => serviceLocator<InstallationNotDoneCubit>()),
       ],
       child: StatusUpdateScreen(
         orderId: orderId,

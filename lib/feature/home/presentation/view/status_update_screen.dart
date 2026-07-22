@@ -23,6 +23,8 @@ import '../view_model/suspend_order/suspend_order_cubit.dart';
 import '../view_model/suspend_order/suspend_order_state.dart';
 import '../view_model/suspend_with_goods_returned/suspend_with_goods_returned_cubit.dart';
 import '../view_model/suspend_with_goods_returned/suspend_with_goods_returned_state.dart';
+import '../view_model/installation_not_done/installation_not_done_cubit.dart';
+import '../view_model/installation_not_done/installation_not_done_state.dart';
 import '../widgets/custom_input_field.dart';
 import '../widgets/status_card.dart';
 import 'store_screen.dart';
@@ -79,8 +81,9 @@ class _StatusUpdateScreenState extends State<StatusUpdateScreen> {
   bool get _isCompletedWithPayment => _selectedStatus == 0;
   bool get _isCompletedWithoutPayment => _selectedStatus == 1;
   bool get _isGoodsLeftWithCustomer => _selectedStatus == 2;
-  bool get _isGoodsReturned => _selectedStatus == 3;
-  bool get _isNotesRequired => _isGoodsLeftWithCustomer;
+  bool get _isInstallationNotDone => _selectedStatus == 3;
+  bool get _isGoodsReturned => _selectedStatus == 4;
+  bool get _isNotesRequired => _isGoodsLeftWithCustomer || _isInstallationNotDone;
 
   @override
   void dispose() {
@@ -292,6 +295,15 @@ class _StatusUpdateScreenState extends State<StatusUpdateScreen> {
 
     if (_isGoodsLeftWithCustomer) {
       context.read<SuspendOrderCubit>().suspendOrder(
+        widget.orderId,
+        _notesController.text.trim(),
+      );
+
+      return;
+    }
+
+    if (_isInstallationNotDone) {
+      context.read<InstallationNotDoneCubit>().installationNotDone(
         widget.orderId,
         _notesController.text.trim(),
       );
@@ -690,6 +702,20 @@ class _StatusUpdateScreenState extends State<StatusUpdateScreen> {
             }
           },
         ),
+        BlocListener<InstallationNotDoneCubit, InstallationNotDoneState>(
+          listener: (context, state) {
+            if (state is InstallationNotDoneSuccess) {
+              _showMessage(LocaleKeys.status_update_success_suspend.tr());
+              _navigateToMainLayout();
+            } else if (state is InstallationNotDoneFailure) {
+              _showMessage(
+                state.apiError?.getLocalizedMessage(context) ??
+                    LocaleKeys.status_update_failed_suspend.tr(),
+                isError: true,
+              );
+            }
+          },
+        ),
       ],
       child: BlocBuilder<CompleteOrderCubit, CompleteOrderState>(
         builder: (context, completeState) {
@@ -700,312 +726,331 @@ class _StatusUpdateScreenState extends State<StatusUpdateScreen> {
                   return BlocBuilder<SuspendWithGoodsReturnedCubit,
                       SuspendWithGoodsReturnedState>(
                     builder: (context, suspendWithGoodsReturnedState) {
-                      final isLoading =
-                          completeState is CompleteOrderLoading ||
-                              suspendState is SuspendOrderLoading ||
-                              completedPaidState is CompletedPaidLoading ||
-                              suspendWithGoodsReturnedState
-                              is SuspendWithGoodsReturnedLoading;
+                      return BlocBuilder<InstallationNotDoneCubit, InstallationNotDoneState>(
+                        builder: (context, installationNotDoneState) {
+                          final isLoading =
+                              completeState is CompleteOrderLoading ||
+                                  suspendState is SuspendOrderLoading ||
+                                  completedPaidState is CompletedPaidLoading ||
+                                  suspendWithGoodsReturnedState
+                                  is SuspendWithGoodsReturnedLoading ||
+                                  installationNotDoneState is InstallationNotDoneLoading;
 
-                      return Scaffold(
-                        backgroundColor: AppColors.surface,
-                        body: SafeArea(
-                          bottom: false,
-                          child: Column(
-                            children: [
-                              Padding(
-                                padding:
-                                const EdgeInsets.fromLTRB(20, 10, 20, 20),
-                                child: Row(
-                                  children: [
-                                    IconButton(
-                                      onPressed: () => Navigator.pop(context),
-                                      icon: const Icon(
-                                        Icons.arrow_back,
-                                        color: Colors.white,
-                                      ),
-                                      padding: EdgeInsets.zero,
-                                      constraints: const BoxConstraints(),
-                                    ),
-                                    Expanded(
-                                      child: Text(
-                                        LocaleKeys.status_update_title.tr(),
-                                        textAlign: TextAlign.center,
-                                        style: const TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 24,
-                                          fontWeight: FontWeight.bold,
-                                        ),
-                                      ),
-                                    ),
-                                    GestureDetector(
-                                      onTap: () {
-                                        Navigator.push(
-                                          context,
-                                          MaterialPageRoute(
-                                            builder: (_) => const StoreScreen(),
+                          return Scaffold(
+                            backgroundColor: AppColors.surface,
+                            body: SafeArea(
+                              bottom: false,
+                              child: Column(
+                                children: [
+                                  Padding(
+                                    padding:
+                                    const EdgeInsets.fromLTRB(20, 10, 20, 20),
+                                    child: Row(
+                                      children: [
+                                        IconButton(
+                                          onPressed: () => Navigator.pop(context),
+                                          icon: const Icon(
+                                            Icons.arrow_back,
+                                            color: Colors.white,
                                           ),
-                                        );
-                                      },
-                                      child: SvgPicture.asset(
-                                        'assets/svg/shopping_cart.svg',
-                                        colorFilter: const ColorFilter.mode(
-                                          Colors.white,
-                                          BlendMode.srcIn,
+                                          padding: EdgeInsets.zero,
+                                          constraints: const BoxConstraints(),
                                         ),
-                                        width: 24,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              Expanded(
-                                child: Container(
-                                  width: double.infinity,
-                                  decoration: const BoxDecoration(
-                                    color: AppColors.scaffoldBackground,
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(30),
-                                      topRight: Radius.circular(30),
+                                        Expanded(
+                                          child: Text(
+                                            LocaleKeys.status_update_title.tr(),
+                                            textAlign: TextAlign.center,
+                                            style: const TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 24,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ),
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                builder: (_) => const StoreScreen(),
+                                              ),
+                                            );
+                                          },
+                                          child: SvgPicture.asset(
+                                            'assets/svg/shopping_cart.svg',
+                                            colorFilter: const ColorFilter.mode(
+                                              Colors.white,
+                                              BlendMode.srcIn,
+                                            ),
+                                            width: 24,
+                                          ),
+                                        ),
+                                      ],
                                     ),
                                   ),
-                                  child: ClipRRect(
-                                    borderRadius: const BorderRadius.only(
-                                      topLeft: Radius.circular(30),
-                                      topRight: Radius.circular(30),
-                                    ),
-                                    child: SingleChildScrollView(
-                                      padding: const EdgeInsets.all(20),
-                                      child: Form(
-                                        key: _formKey,
-                                        child: Column(
-                                          crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                          children: [
-                                            Center(
-                                              child: Text(
-                                                LocaleKeys
-                                                    .status_update_select_result
-                                                    .tr(
-                                                  args: [widget.customerName],
-                                                ),
-                                                textAlign: TextAlign.center,
-                                                style: const TextStyle(
-                                                  color: Colors.grey,
-                                                  fontSize: 14,
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(height: 20),
-                                            StatusCard(
-                                              index: 0,
-                                              selectedStatus: _selectedStatus,
-                                              icon: '✅',
-                                              title: LocaleKeys
-                                                  .status_update_completed_paid
-                                                  .tr(),
-                                              description: '',
-                                              onTap: () =>
-                                                  _onStatusSelected(0),
-                                            ),
-                                            if (_isCompletedWithPayment) ...[
-                                              const SizedBox(height: 20),
-                                              Center(
-                                                child: Text(
-                                                  LocaleKeys
-                                                      .status_update_amount_collected
-                                                      .tr(),
-                                                  style: const TextStyle(
-                                                    color: Colors.grey,
-                                                    fontSize: 13,
-                                                  ),
-                                                ),
-                                              ),
-                                              const SizedBox(height: 10),
-                                              CustomInputField(
-                                                controller: _amountController,
-                                                hintText: LocaleKeys
-                                                    .status_update_set_amount
-                                                    .tr(),
-                                                keyboardType:
-                                                const TextInputType
-                                                    .numberWithOptions(
-                                                  decimal: true,
-                                                ),
-                                                validator: _validateAmount,
-                                              ),
-                                              const SizedBox(height: 16),
-                                              Center(
-                                                child: Text(
-                                                  LocaleKeys
-                                                      .status_update_materials_amount
-                                                      .tr(),
-                                                  style: const TextStyle(
-                                                    color: Colors.grey,
-                                                    fontSize: 13,
-                                                  ),
-                                                ),
-                                              ),
-                                              const SizedBox(height: 10),
-                                              CustomInputField(
-                                                controller:
-                                                _materialsController,
-                                                hintText: LocaleKeys
-                                                    .status_update_set_materials_amount
-                                                    .tr(),
-                                                keyboardType:
-                                                const TextInputType
-                                                    .numberWithOptions(
-                                                  decimal: true,
-                                                ),
-                                                validator: _validateMaterials,
-                                              ),
-                                              const SizedBox(height: 16),
-                                              _buildDepositSection(),
-                                            ],
-                                            const SizedBox(height: 20),
-                                            StatusCard(
-                                              index: 1,
-                                              selectedStatus: _selectedStatus,
-                                              icon: '🔧',
-                                              title: LocaleKeys
-                                                  .status_update_completed_unpaid
-                                                  .tr(),
-                                              description: LocaleKeys
-                                                  .status_update_completed_unpaid_desc
-                                                  .tr(),
-                                              onTap: () =>
-                                                  _onStatusSelected(1),
-                                            ),
-                                            const SizedBox(height: 20),
-                                            StatusCard(
-                                              index: 2,
-                                              selectedStatus: _selectedStatus,
-                                              icon: '📦',
-                                              title: LocaleKeys
-                                                  .status_update_suspended_left
-                                                  .tr(),
-                                              description: LocaleKeys
-                                                  .status_update_suspended_left_desc
-                                                  .tr(),
-                                              onTap: () =>
-                                                  _onStatusSelected(2),
-                                            ),
-                                            const SizedBox(height: 20),
-                                            StatusCard(
-                                              index: 3,
-                                              selectedStatus: _selectedStatus,
-                                              icon: '↩️',
-                                              title: LocaleKeys
-                                                  .status_update_suspended_returned
-                                                  .tr(),
-                                              description: LocaleKeys
-                                                  .status_update_suspended_returned_desc
-                                                  .tr(),
-                                              onTap: () =>
-                                                  _onStatusSelected(3),
-                                            ),
-                                            if (_isGoodsReturned) ...[
-                                              SizedBox(height: 20.h),
-                                              _buildReturnedProductsSection(),
-                                            ],
-                                            const SizedBox(height: 24),
-                                            Center(
-                                              child: RichText(
-                                                text: TextSpan(
-                                                  text: LocaleKeys
-                                                      .status_update_additional_notes
-                                                      .tr(),
-                                                  style: TextStyle(
-                                                    color: Colors.grey.shade700,
-                                                    fontSize: 13,
-                                                    fontWeight: FontWeight.w500,
-                                                  ),
-                                                  children: [
-                                                    if (_isNotesRequired)
-                                                      const TextSpan(
-                                                        text: ' *',
-                                                        style: TextStyle(
-                                                          color: Colors.red,
-                                                          fontWeight:
-                                                          FontWeight.bold,
-                                                        ),
-                                                      ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(height: 10),
-                                            CustomInputField(
-                                              controller: _notesController,
-                                              hintText: _isNotesRequired
-                                                  ? LocaleKeys
-                                                  .status_update_add_note_required
-                                                  .tr()
-                                                  : LocaleKeys
-                                                  .status_update_add_note
-                                                  .tr(),
-                                              maxLines: 3,
-                                              validator: _validateNotes,
-                                            ),
-                                            const SizedBox(height: 24),
-                                            SizedBox(
-                                              width: double.infinity,
-                                              child: ElevatedButton(
-                                                onPressed:
-                                                isLoading ? null : _submit,
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor:
-                                                  AppColors.accentRed,
-                                                  foregroundColor: Colors.white,
-                                                  disabledBackgroundColor:
-                                                  AppColors.accentRed
-                                                      .withOpacity(0.6),
-                                                  padding: const EdgeInsets
-                                                      .symmetric(
-                                                    vertical: 16,
-                                                  ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                    BorderRadius.circular(
-                                                      20,
+                                  Expanded(
+                                    child: Container(
+                                      width: double.infinity,
+                                      decoration: const BoxDecoration(
+                                        color: AppColors.scaffoldBackground,
+                                        borderRadius: BorderRadius.only(
+                                          topLeft: Radius.circular(30),
+                                          topRight: Radius.circular(30),
+                                        ),
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: const BorderRadius.only(
+                                          topLeft: Radius.circular(30),
+                                          topRight: Radius.circular(30),
+                                        ),
+                                        child: SingleChildScrollView(
+                                          padding: const EdgeInsets.all(20),
+                                          child: Form(
+                                            key: _formKey,
+                                            child: Column(
+                                              crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                              children: [
+                                                Center(
+                                                  child: Text(
+                                                    LocaleKeys
+                                                        .status_update_select_result
+                                                        .tr(
+                                                      args: [widget.customerName],
+                                                    ),
+                                                    textAlign: TextAlign.center,
+                                                    style: const TextStyle(
+                                                      color: Colors.grey,
+                                                      fontSize: 14,
                                                     ),
                                                   ),
-                                                  elevation: 0,
                                                 ),
-                                                child: isLoading
-                                                    ? const SizedBox(
-                                                  height: 20,
-                                                  width: 20,
-                                                  child:
-                                                  CircularProgressIndicator(
-                                                    color: Colors.white,
-                                                    strokeWidth: 2,
-                                                  ),
-                                                )
-                                                    : Text(
-                                                  LocaleKeys
-                                                      .status_update_submit
+                                                const SizedBox(height: 20),
+                                                StatusCard(
+                                                  index: 0,
+                                                  selectedStatus: _selectedStatus,
+                                                  icon: '✅',
+                                                  title: LocaleKeys
+                                                      .status_update_completed_paid
                                                       .tr(),
-                                                  style: const TextStyle(
-                                                    fontSize: 16,
-                                                    fontWeight:
-                                                    FontWeight.bold,
+                                                  description: '',
+                                                  onTap: () =>
+                                                      _onStatusSelected(0),
+                                                ),
+                                                if (_isCompletedWithPayment) ...[
+                                                  const SizedBox(height: 20),
+                                                  Center(
+                                                    child: Text(
+                                                      LocaleKeys
+                                                          .status_update_amount_collected
+                                                          .tr(),
+                                                      style: const TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 13,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  CustomInputField(
+                                                    controller: _amountController,
+                                                    hintText: LocaleKeys
+                                                        .status_update_set_amount
+                                                        .tr(),
+                                                    keyboardType:
+                                                    const TextInputType
+                                                        .numberWithOptions(
+                                                      decimal: true,
+                                                    ),
+                                                    validator: _validateAmount,
+                                                  ),
+                                                  const SizedBox(height: 16),
+                                                  Center(
+                                                    child: Text(
+                                                      LocaleKeys
+                                                          .status_update_materials_amount
+                                                          .tr(),
+                                                      style: const TextStyle(
+                                                        color: Colors.grey,
+                                                        fontSize: 13,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                  const SizedBox(height: 10),
+                                                  CustomInputField(
+                                                    controller:
+                                                    _materialsController,
+                                                    hintText: LocaleKeys
+                                                        .status_update_set_materials_amount
+                                                        .tr(),
+                                                    keyboardType:
+                                                    const TextInputType
+                                                        .numberWithOptions(
+                                                      decimal: true,
+                                                    ),
+                                                    validator: _validateMaterials,
+                                                  ),
+                                                  const SizedBox(height: 16),
+                                                  _buildDepositSection(),
+                                                ],
+                                                const SizedBox(height: 20),
+                                                StatusCard(
+                                                  index: 1,
+                                                  selectedStatus: _selectedStatus,
+                                                  icon: '🔧',
+                                                  title: LocaleKeys
+                                                      .status_update_completed_unpaid
+                                                      .tr(),
+                                                  description: LocaleKeys
+                                                      .status_update_completed_unpaid_desc
+                                                      .tr(),
+                                                  onTap: () =>
+                                                      _onStatusSelected(1),
+                                                ),
+                                                const SizedBox(height: 20),
+                                                StatusCard(
+                                                  index: 2,
+                                                  selectedStatus: _selectedStatus,
+                                                  icon: '📦',
+                                                  title: LocaleKeys
+                                                      .status_update_suspended_left
+                                                      .tr(),
+                                                  description: LocaleKeys
+                                                      .status_update_suspended_left_desc
+                                                      .tr(),
+                                                  onTap: () =>
+                                                      _onStatusSelected(2),
+                                                ),
+                                                const SizedBox(height: 20),
+                                                StatusCard(
+                                                  index: 3,
+                                                  selectedStatus: _selectedStatus,
+                                                  icon: '🚫',
+                                                  title: LocaleKeys
+                                                      .status_update_installation_not_done
+                                                      .tr(),
+                                                  description: LocaleKeys
+                                                      .status_update_installation_not_done_desc
+                                                      .tr(),
+                                                  onTap: () =>
+                                                      _onStatusSelected(3),
+                                                ),
+                                                const SizedBox(height: 20),
+                                                StatusCard(
+                                                  index: 4,
+                                                  selectedStatus: _selectedStatus,
+                                                  icon: '↩️',
+                                                  title: LocaleKeys
+                                                      .status_update_suspended_returned
+                                                      .tr(),
+                                                  description: LocaleKeys
+                                                      .status_update_suspended_returned_desc
+                                                      .tr(),
+                                                  onTap: () =>
+                                                      _onStatusSelected(4),
+                                                ),
+                                                if (_isGoodsReturned) ...[
+                                                  SizedBox(height: 20.h),
+                                                  _buildReturnedProductsSection(),
+                                                ],
+                                                const SizedBox(height: 24),
+                                                Center(
+                                                  child: RichText(
+                                                    text: TextSpan(
+                                                      text: LocaleKeys
+                                                          .status_update_additional_notes
+                                                          .tr(),
+                                                      style: TextStyle(
+                                                        color: Colors.grey.shade700,
+                                                        fontSize: 13,
+                                                        fontWeight: FontWeight.w500,
+                                                      ),
+                                                      children: [
+                                                        if (_isNotesRequired)
+                                                          const TextSpan(
+                                                            text: ' *',
+                                                            style: TextStyle(
+                                                              color: Colors.red,
+                                                              fontWeight:
+                                                              FontWeight.bold,
+                                                            ),
+                                                          ),
+                                                      ],
+                                                    ),
                                                   ),
                                                 ),
-                                              ),
+                                                const SizedBox(height: 10),
+                                                CustomInputField(
+                                                  controller: _notesController,
+                                                  hintText: _isNotesRequired
+                                                      ? LocaleKeys
+                                                      .status_update_add_note_required
+                                                      .tr()
+                                                      : LocaleKeys
+                                                      .status_update_add_note
+                                                      .tr(),
+                                                  maxLines: 3,
+                                                  validator: _validateNotes,
+                                                ),
+                                                const SizedBox(height: 24),
+                                                SizedBox(
+                                                  width: double.infinity,
+                                                  child: ElevatedButton(
+                                                    onPressed:
+                                                    isLoading ? null : _submit,
+                                                    style: ElevatedButton.styleFrom(
+                                                      backgroundColor:
+                                                      AppColors.accentRed,
+                                                      foregroundColor: Colors.white,
+                                                      disabledBackgroundColor:
+                                                      AppColors.accentRed
+                                                          .withOpacity(0.6),
+                                                      padding: const EdgeInsets
+                                                          .symmetric(
+                                                        vertical: 16,
+                                                      ),
+                                                      shape: RoundedRectangleBorder(
+                                                        borderRadius:
+                                                        BorderRadius.circular(
+                                                          20,
+                                                        ),
+                                                      ),
+                                                      elevation: 0,
+                                                    ),
+                                                    child: isLoading
+                                                        ? const SizedBox(
+                                                      height: 20,
+                                                      width: 20,
+                                                      child:
+                                                      CircularProgressIndicator(
+                                                        color: Colors.white,
+                                                        strokeWidth: 2,
+                                                      ),
+                                                    )
+                                                        : Text(
+                                                      LocaleKeys
+                                                          .status_update_submit
+                                                          .tr(),
+                                                      style: const TextStyle(
+                                                        fontSize: 16,
+                                                        fontWeight:
+                                                        FontWeight.bold,
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ),
+                                                const SizedBox(height: 40),
+                                              ],
                                             ),
-                                            const SizedBox(height: 40),
-                                          ],
+                                          ),
                                         ),
                                       ),
                                     ),
                                   ),
-                                ),
+                                ],
                               ),
-                            ],
-                          ),
-                        ),
+                            ),
+                          );
+                        },
                       );
                     },
                   );

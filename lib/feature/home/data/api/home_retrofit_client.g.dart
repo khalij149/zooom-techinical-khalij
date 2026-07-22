@@ -362,6 +362,43 @@ class _HomeRetrofitClient implements HomeRetrofitClient {
   }
 
   @override
+  Future<InstallationNotDoneModel> installationNotDone(
+    int orderId,
+    String notes,
+    String token,
+  ) async {
+    final _extra = <String, dynamic>{};
+    final queryParameters = <String, dynamic>{};
+    final _headers = <String, dynamic>{r'Authorization': token};
+    _headers.removeWhere((k, v) => v == null);
+    final _data = {'notes': notes};
+    final _options = _setStreamType<InstallationNotDoneModel>(
+      Options(
+        method: 'POST',
+        headers: _headers,
+        extra: _extra,
+        contentType: 'application/x-www-form-urlencoded',
+      )
+          .compose(
+            _dio.options,
+            'orders/${orderId}/installation-not-done',
+            queryParameters: queryParameters,
+            data: _data,
+          )
+          .copyWith(baseUrl: _combineBaseUrls(_dio.options.baseUrl, baseUrl)),
+    );
+    final _result = await _dio.fetch<Map<String, dynamic>>(_options);
+    late InstallationNotDoneModel _value;
+    try {
+      _value = InstallationNotDoneModel.fromJson(_result.data!);
+    } on Object catch (e, s) {
+      errorLogger?.logError(e, s, _options, response: _result);
+      rethrow;
+    }
+    return _value;
+  }
+
+  @override
   Future<ProductsInOrders> productsInOrders(int orderId, String token) async {
     final _extra = <String, dynamic>{};
     final queryParameters = <String, dynamic>{};

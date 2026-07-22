@@ -24,107 +24,123 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => serviceLocator<HomeCubit>()..getHomeData(),
-      child: Scaffold(
-        backgroundColor: AppColors.surface,
-        body: SafeArea(
+      child: Builder(
+        builder: (context) {
+          return Scaffold(
+            backgroundColor: AppColors.surface,
+            body: SafeArea(
 
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              SizedBox(
-                height: 20,
-              ),
-              Padding(
-                padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 20.h),
-                child: Row(
-                  crossAxisAlignment:CrossAxisAlignment.center  ,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      LocaleKeys.Home_welcome.tr(),
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 28.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    SizedBox(width: 8.w),
-                    Text('👋', style: TextStyle(fontSize: 24.sp)),
-                    Spacer(),
-                    GestureDetector(
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (_) => const StoreScreen(),
-                          ),
-                        );
-                      },
-                      child: SvgPicture.asset(
-                        'assets/svg/shopping_cart.svg',
-                        colorFilter: const ColorFilter.mode(
-                          Colors.white,
-                          BlendMode.srcIn,
-                        ),
-                        width: 24,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  decoration: BoxDecoration(
-                    color: AppColors.scaffoldBackground,
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30.r),
-                      topRight: Radius.circular(30.r),
-                    ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    height: 20,
                   ),
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(30.r),
-                      topRight: Radius.circular(30.r),
-                    ),
-                    child: Stack(
+                  Padding(
+                    padding: EdgeInsets.fromLTRB(20.w, 10.h, 20.w, 20.h),
+                    child: Row(
+                      crossAxisAlignment:CrossAxisAlignment.center  ,
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        BlocBuilder<HomeCubit, HomeState>(
-                          builder: (context, state) {
-                            if (state is HomeLoading) {
-                              return Skeletonizer(
-                                enabled: true,
-                                child: _buildHomeContent(
-                                  context,
-                                  _getDummyHomeModel(),
-                                ),
-                              );
-                            } else if (state is HomeFailure) {
-                              return Center(
-                                child: Text(
-                                  state.apiError?.message?.toString() ??
-                                      LocaleKeys.error_SomethingWentWrong.tr(),
-                                ),
-                              );
-                            } else if (state is HomeSuccess) {
-                              return RefreshIndicator(
-                                onRefresh: () =>
-                                    context.read<HomeCubit>().getHomeData(),
-                                child: _buildHomeContent(context, state.homeModel),
-                              );
-                            }
-
-                            return const SizedBox.shrink();
+                        Text(
+                          LocaleKeys.Home_welcome.tr(),
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 28.sp,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(width: 8.w),
+                        Text('👋', style: TextStyle(fontSize: 24.sp)),
+                        Spacer(),
+                        GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => const StoreScreen(),
+                              ),
+                            );
                           },
+                          child: SvgPicture.asset(
+                            'assets/svg/shopping_cart.svg',
+                            colorFilter: const ColorFilter.mode(
+                              Colors.white,
+                              BlendMode.srcIn,
+                            ),
+                            width: 24,
+                          ),
                         ),
                       ],
                     ),
                   ),
-                ),
+                  Expanded(
+                    child: Container(
+                      width: double.infinity,
+                      decoration: BoxDecoration(
+                        color: AppColors.scaffoldBackground,
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30.r),
+                          topRight: Radius.circular(30.r),
+                        ),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                          topLeft: Radius.circular(30.r),
+                          topRight: Radius.circular(30.r),
+                        ),
+                        child: Stack(
+                          children: [
+                            RefreshIndicator(
+                              onRefresh: () =>
+                                  context.read<HomeCubit>().getHomeData(),
+                              child: BlocBuilder<HomeCubit, HomeState>(
+                                builder: (context, state) {
+                                  if (state is HomeLoading) {
+                                    return Skeletonizer(
+                                      enabled: true,
+                                      child: _buildHomeContent(
+                                        context,
+                                        _getDummyHomeModel(),
+                                      ),
+                                    );
+                                  } else if (state is HomeFailure) {
+                                    return SingleChildScrollView(
+                                      physics: const AlwaysScrollableScrollPhysics(),
+                                      child: Container(
+                                        height: MediaQuery.of(context).size.height * 0.7,
+                                        alignment: Alignment.center,
+                                        padding: EdgeInsets.symmetric(horizontal: 20.w),
+                                        child: Text(
+                                          state.apiError?.getLocalizedMessage(context) ??
+                                              state.exception?.toString() ??
+                                              LocaleKeys.error_SomethingWentWrong.tr(),
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 16.sp,
+                                            color: Colors.grey.shade700,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  } else if (state is HomeSuccess) {
+                                    return _buildHomeContent(context, state.homeModel);
+                                  }
+
+                                  return const SizedBox.shrink();
+                                },
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-            ],
-          ),
-        ),
+            ),
+          );
+        },
       ),
     );
   }
@@ -133,10 +149,10 @@ class HomeScreen extends StatelessWidget {
     final orders = homeModel.data ?? [];
 
     final newOrders =
-        orders.where((o) => o.status?.value != 'completed').toList();
+    orders.where((o) => o.status?.value != 'completed').toList();
 
     final completedOrders =
-        orders.where((o) => o.status?.value == 'completed').toList();
+    orders.where((o) => o.status?.value == 'completed').toList();
 
     RequestCardData mapToRequestCardData(OrderModel order) {
       return RequestCardData(
@@ -176,7 +192,7 @@ class HomeScreen extends StatelessWidget {
             ),
             SizedBox(height: 10.h),
             ...newOrders.map(
-              (order) => RequestCard(
+                  (order) => RequestCard(
                 order: mapToRequestCardData(order),
               ),
             ),
@@ -192,7 +208,7 @@ class HomeScreen extends StatelessWidget {
             ),
             SizedBox(height: 10.h),
             ...completedOrders.map(
-              (order) => RequestCard(
+                  (order) => RequestCard(
                 order: mapToRequestCardData(order),
               ),
             ),
@@ -215,7 +231,7 @@ class HomeScreen extends StatelessWidget {
       stats: StatsModel(total: 0, canceled: 0, completed: 0, pending: 0),
       data: List.generate(
         3,
-        (index) => OrderModel(
+            (index) => OrderModel(
           id: index,
           code: 12345,
           customer: CustomerModel(name: 'Customer Name ' * 2),

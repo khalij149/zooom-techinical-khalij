@@ -11,6 +11,7 @@ import 'package:zoom_provider/feature/home/data/model/start_order_model.dart';
 import 'package:zoom_provider/feature/home/data/model/suspend_order_model.dart';
 import 'package:zoom_provider/feature/home/data/model/suspend_with_goods_returned.dart';
 import 'package:zoom_provider/feature/home/data/model/unsuspend_model.dart';
+import 'package:zoom_provider/feature/home/data/model/installation_not_done_model.dart';
 
 import '../../../../core/constants/app_values.dart';
 import '../../../../core/network/common/api_result.dart';
@@ -240,6 +241,26 @@ class HomeDataSourcesImp implements HomeDataSources {
 
       case FailureResult<SuspendWithGoodsReturnedModel>():
         return FailureResult<SuspendWithGoodsReturnedModel>(
+          exception: result.exception,
+          apiError: result.apiError,
+        );
+    }
+  }
+
+  @override
+  Future<Result<InstallationNotDoneModel>> installationNotDone(int orderId, String notes) async{
+    final result = await _apiManager.execute<InstallationNotDoneModel>(() async {
+      final token = await SharedPreferencesUtils.getString(AppValues.token);
+      final auth = 'Bearer $token';
+      return await _apiService.installationNotDone(orderId,notes,auth);
+    });
+
+    switch (result) {
+      case SuccessResult<InstallationNotDoneModel>():
+        return SuccessResult<InstallationNotDoneModel>(result.data);
+
+      case FailureResult<InstallationNotDoneModel>():
+        return FailureResult<InstallationNotDoneModel>(
           exception: result.exception,
           apiError: result.apiError,
         );
