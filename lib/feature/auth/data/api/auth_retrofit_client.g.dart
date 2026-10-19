@@ -12,7 +12,7 @@ part of 'auth_retrofit_client.dart';
 
 class _AuthRetrofitClient implements AuthRetrofitClient {
   _AuthRetrofitClient(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'http://zoomoman.online/api/';
+    baseUrl ??= 'https://zoomoman.online/api/';
   }
 
   final Dio _dio;

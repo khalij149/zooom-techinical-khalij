@@ -12,7 +12,7 @@ part of 'profile_update_retrofit_client.dart';
 
 class _ProfileUpdateRetrofitClient implements ProfileUpdateRetrofitClient {
   _ProfileUpdateRetrofitClient(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'http://zoomoman.online/api/';
+    baseUrl ??= 'https://zoomoman.online/api/';
   }
 
   final Dio _dio;

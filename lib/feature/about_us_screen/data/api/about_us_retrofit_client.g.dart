@@ -12,7 +12,7 @@ part of 'about_us_retrofit_client.dart';
 
 class _AboutUsRetrofitClient implements AboutUsRetrofitClient {
   _AboutUsRetrofitClient(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'http://zoomoman.online/api/';
+    baseUrl ??= 'https://zoomoman.online/api/';
   }
 
   final Dio _dio;

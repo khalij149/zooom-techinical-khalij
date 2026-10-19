@@ -12,7 +12,7 @@ part of 'home_retrofit_client.dart';
 
 class _HomeRetrofitClient implements HomeRetrofitClient {
   _HomeRetrofitClient(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'http://zoomoman.online/api/';
+    baseUrl ??= 'https://zoomoman.online/api/';
   }
 
   final Dio _dio;

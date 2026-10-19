@@ -12,7 +12,7 @@ part of 'delete_retrofit_client.dart';
 
 class _DeleteRetrofitClient implements DeleteRetrofitClient {
   _DeleteRetrofitClient(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'http://zoomoman.online/api/';
+    baseUrl ??= 'https://zoomoman.online/api/';
   }
 
   final Dio _dio;

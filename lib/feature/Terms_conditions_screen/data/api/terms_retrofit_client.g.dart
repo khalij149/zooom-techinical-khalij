@@ -12,7 +12,7 @@ part of 'terms_retrofit_client.dart';
 
 class _TermsRetrofitClient implements TermsRetrofitClient {
   _TermsRetrofitClient(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'http://zoomoman.online/api/';
+    baseUrl ??= 'https://zoomoman.online/api/';
   }
 
   final Dio _dio;

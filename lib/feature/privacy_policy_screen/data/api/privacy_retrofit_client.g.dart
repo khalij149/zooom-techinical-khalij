@@ -12,7 +12,7 @@ part of 'privacy_retrofit_client.dart';
 
 class _PrivacyRetrofitClient implements PrivacyRetrofitClient {
   _PrivacyRetrofitClient(this._dio, {this.baseUrl, this.errorLogger}) {
-    baseUrl ??= 'http://zoomoman.online/api/';
+    baseUrl ??= 'https://zoomoman.online/api/';
   }
 
   final Dio _dio;
